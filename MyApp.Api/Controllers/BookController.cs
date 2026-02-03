@@ -1,0 +1,23 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using MyApp.Application.service;
+using MyApp.Domain;
+using Serilog;
+
+namespace MyApp.Api.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class BookController(BookService bookService, ILogger<BookController> logger) : ControllerBase
+    {
+        private readonly BookService bookService = bookService;
+
+        [HttpGet("aaa/{id}")]
+        public List<Book> GetBooks(int id)
+        {
+            logger.LogInformation("Test logging {id}", id);
+            var author = new Author { Id = id, Name = "", Surname = "" };
+            return bookService.FindBooks(author);
+        }
+    }
+}
