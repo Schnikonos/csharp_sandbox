@@ -41,8 +41,8 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Test
-      run: dotnet test --no-build -c Release --verbosity normal
+      run: dotnet test --no-build --verbosity normal
 
     - name: Build publish output (optional)
       # If your Dockerfile expects published output, produce it here.
-      run: dotnet publish ./MyApp.Api -c Release -o ./published
+      run: dotnet publish ./MyApp.Api -o ./published
