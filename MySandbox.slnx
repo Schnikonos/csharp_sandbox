@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="MyApp.Api/MyApp.Api.csproj" />
     <Project Path="MyApp.Application/MyApp.Application.csproj" />

@@ -6,12 +6,14 @@ using System.Text;
 
 namespace MyApp.Infrastructure.Persistence
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : DbContext, IAppDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Book> Books => Set<Book>();
         public DbSet<Author> Authors => Set<Author>();
+
+        public override int SaveChanges() => base.SaveChanges();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,7 +25,7 @@ namespace MyApp.Infrastructure.Persistence
                 entity.Property(a => a.Name).IsRequired();
                 entity.Property(a => a.Surname);
             });
-            
+
             modelBuilder.Entity<Book>(entity =>
             {
                 entity.HasKey(u => u.Id);

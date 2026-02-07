@@ -7,9 +7,9 @@ namespace MyApp.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthorController(BookService bookService, ILogger<AuthorController> logger) : ControllerBase
+    public class AuthorController(IBookService bookService, ILogger<AuthorController> logger) : ControllerBase
     {
-        private readonly BookService bookService = bookService;
+        private readonly IBookService bookService = bookService;
 
 
         [HttpGet("all")]

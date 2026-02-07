@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyApp.Domain\MyApp.Domain.csproj" />
+    <ProjectReference Include="..\MyApp.IdGenerator\MyApp.IdGenerator.csproj" />
     <ProjectReference Include="..\MyApp.Infrastructure\MyApp.Infrastructure.csproj" />
     <ProjectReference Include="..\MyApp.Templating\MyApp.Templating.csproj" />
   </ItemGroup>
