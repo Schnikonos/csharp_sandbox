@@ -158,6 +158,17 @@ public void Test1()
 }
 ```
 
+### Serialization
+See [SerializationDemoService.cs](MyApp.Application/service/SerializationDemoService.cs)
+#### JSON
+
+#### XML
+Import <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
+
+
+### File IO
+Use of File.WriteAllText and File.ReadAllText for simple file operations. See [FileDemoService.cs](MyApp.Application/service/FileDemoService.cs)
+
 ### Mock
 Import Moq package, then: [CheckService1Test.cs](MyApp.IdGenerator.Tests/CheckService1Test.cs)
 
@@ -168,6 +179,41 @@ Import Microsoft.AspNetCore.Mvc.Testing
 
 See [WeatherForecastControllerTest.cs](MyApp.Api.Tests/WeatherForecastControllerTest.cs)
 or more complex [AuthorControllerTest.cs](MyApp.Api.Tests/AuthorControllerTest.cs)
+
+## Async programming
+See [AsyncDemoService.cs](MyApp.Application/service/AsyncDemoService.cs)
+
+Basically just use async/await and Task<T> as return type, and make sure to call async methods all the way down to avoid blocking threads.
+
+## ClientCall
+1) declare HttpClient in Program.cs:
+```csharp
+builder.Services.AddHttpClient("demoApiClient", client =>
+{
+    client.BaseAddress = new Uri("https://127.0.0.1:1234/");
+    client.Timeout = TimeSpan.FromSeconds(10);
+})
+```
+
+2) inject IHttpClientFactory and create client:
+```csharp
+public class ClientCallService
+{
+    private readonly HttpClient _httpClient;
+
+    public ClientCallService(IHttpClientFactory httpClientFactory)
+    {
+        _httpClient = httpClientFactory.CreateClient("demoApiClient");
+    }
+
+    public async Task<string> GetDataFromApi()
+    {
+        var response = await _httpClient.GetAsync("/api/data");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
+    }
+}
+```
 
 ## Naming conventions
 ### Core conventions

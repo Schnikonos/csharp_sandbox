@@ -9,6 +9,7 @@ using MyApp.Infrastructure.Persistence;
 using MyApp.Templating;
 using Serilog;
 using System;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,13 +36,43 @@ builder.Services.AddDbContext<IAppDbContext, AppDbContext>(options =>
         b => b.MigrationsAssembly("MyApp.Infrastructure")
     ));
 
+// register MediatR to allow application events listening and handling
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(MyApp.IdGenerator.AssemblyMarker).Assembly));
+
+// adding a rate limiter for API calls
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.User.Identity?.Name ?? httpContext.Request.Headers.Host.ToString(),
+            factory: partition => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = true,
+                PermitLimit = 10,
+                QueueLimit = 0,
+                Window = TimeSpan.FromSeconds(1)
+            }));
+});
+
+builder.Services.AddHttpClient("demoApiClient", client =>
+{
+    client.BaseAddress = new Uri("https://127.0.0.1:1234/");
+    client.Timeout = TimeSpan.FromSeconds(10);
+}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler {
+    // for demo purposes only, to allow self-signed certificates when using https in the demo API
+    ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+});
+
 
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorInfoService, AuthorInfoService>();
 builder.Services.AddSingleton<HtmlTemplateRenderer>();
 builder.Services.AddHostedService<SchedulerService>();
+builder.Services.AddTransient<AsyncDemoService>();
+builder.Services.AddScoped<ClientCallService>();
+builder.Services.AddScoped<FileDemoService>();
+builder.Services.AddScoped<SerializationDemoService>();
 
 builder.Services.AddSingleton<CEServiceSender>();
 builder.Services.AddTransient<CEServiceListener>();
@@ -87,6 +118,10 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+// activate rate limiting
+app.UseRateLimiter();
+
+// serve static files in wwwroot folder (e.g. for OpenAPI UI)
 app.UseStaticFiles();
 
 app.MapControllers();
