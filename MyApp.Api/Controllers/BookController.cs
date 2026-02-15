@@ -13,11 +13,11 @@ namespace MyApp.Api.Controllers
         private readonly IBookService bookService = bookService;
 
         [HttpGet("aaa/{id}")]
-        public List<Book> GetBooks(int id)
+        public async Task<List<Book>> GetBooks(int id)
         {
             logger.LogInformation("Test logging {id}", id);
             var author = new Author { Id = id, Name = "", Surname = "" };
-            return bookService.FindBooks(author);
+            return await bookService.FindBooks(author);
         }
     }
 }

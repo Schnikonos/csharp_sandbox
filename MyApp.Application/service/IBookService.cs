@@ -4,8 +4,8 @@ namespace MyApp.Application.service
 {
     public interface IBookService
     {
-        void AddAuthor(Author author);
-        List<Book> FindBooks(Author author);
+        Task AddAuthor(Author author);
+        Task<List<Book>> FindBooks(Author author);
         Task<List<Author>> GetAuthors();
     }
 }

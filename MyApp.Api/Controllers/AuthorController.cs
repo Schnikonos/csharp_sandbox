@@ -20,10 +20,10 @@ namespace MyApp.Api.Controllers
         }
 
         [HttpPost]
-        public void AddAuthor(Author author)
+        public async Task AddAuthor(Author author)
         {
             logger.LogInformation("AddAuthor {author}", author);
-            this.bookService.AddAuthor(author);
+            await this.bookService.AddAuthor(author);
         }
     }
 }

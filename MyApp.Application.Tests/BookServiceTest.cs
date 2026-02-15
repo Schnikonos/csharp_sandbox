@@ -11,41 +11,44 @@ using Xunit.Abstractions;
 
 namespace MyApp.Application.Tests
 {
-    public class BookServiceTest
+    public class BookServiceTest : IDisposable
     {
         private readonly ITestOutputHelper output;
         private readonly BookService bookService;
-        private readonly Mock<IAppDbContext> dbMock;
+        private readonly AppDbContext context;
 
         public BookServiceTest(ITestOutputHelper output)
         {
             this.output = output;
-            dbMock = new Mock<IAppDbContext>();
-            bookService = new BookService(dbMock.Object);
+
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase("TestDb")
+                .Options;
+
+            context = new AppDbContext(options);
+            context.Database.EnsureDeleted(); // avoid data persistence between tests
+            bookService = new BookService(context);
+        }
+
+        public void Dispose()
+        {
+            context.Dispose();
         }
 
         [Fact]
         public async Task TestMockDbGet()
         {
             output.WriteLine("test1");
-            
-            var data = new List<Author>
-            {
-                new Author { Id = 1, Name = "Author1", Surname = "Surname1"  },
-                new Author { Id = 2, Name = "Author2", Surname = "Surname2"  },
-            }.AsQueryable();
-            var mockSet = new Mock<DbSet<Author>>();
-            mockSet.As<IQueryable<Author>>().Setup(m => m.Provider).Returns(data.Provider);
-            mockSet.As<IQueryable<Author>>().Setup(m => m.Expression).Returns(data.Expression);
-            mockSet.As<IQueryable<Author>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockSet.As<IQueryable<Author>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
 
-            dbMock.Setup(x => x.Authors).Returns(mockSet.Object);
+            context.Authors.Add(new Author { Id = 1, Name = "Author1", Surname = "Surname1" });
+            context.Authors.Add(new Author { Id = 2, Name = "Author2", Surname = "Surname2" });
+            context.SaveChanges();
+
             List<Author> res = await bookService.GetAuthors();
 
             output.WriteLine("test1 {0}", res[0].Name);
             Assert.Equal("Author1", res[0].Name);
-            dbMock.Verify(x => x.Authors, Times.Once);
+            //dbMock.Verify(x => x.Authors, Times.Once);
         }
     }
 }

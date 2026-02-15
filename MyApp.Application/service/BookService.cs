@@ -1,4 +1,5 @@
-﻿using MyApp.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using MyApp.Domain;
 using MyApp.IdGenerator.ClassicEvents;
 using MyApp.Infrastructure.Persistence;
 using MyApp.Templating;
@@ -9,24 +10,24 @@ namespace MyApp.Application.service
 {
     public class BookService(IAppDbContext appDbContext) : IBookService
     {
-        public List<Book> FindBooks(Author author)
+        async public Task<List<Book>> FindBooks(Author author)
         {
-            List<Book> books = [.. appDbContext.Books];
+            List<Book> books = await appDbContext.Books.ToListAsync();
             var book = new Book { Title = "Title1", Description = "Description1", Author = author, AuthorId = author.Id };
             var list = new List<Book>();
             list.Add(book);
             return list;
         }
 
-        public void AddAuthor(Author author)
+        public async Task AddAuthor(Author author)
         {
-            appDbContext.Authors.Add(author);
+            await appDbContext.Authors.AddAsync(author);
             appDbContext.SaveChanges();
         }
 
         async public Task<List<Author>> GetAuthors()
         {
-            return [.. appDbContext.Authors];
+            return await appDbContext.Authors.ToListAsync();
         }
     }
 }
