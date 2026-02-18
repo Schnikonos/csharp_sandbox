@@ -18,7 +18,7 @@ namespace MyApp.Api.Tests
         {
             builder.ConfigureServices(services =>
             {
-                var mock = new Mock<IBookService>();
+                var mock = new Mock<IAuthorService>();
                 mock.Setup(s => s.GetAuthors()).ReturnsAsync(new List<Author>
                 {
                     new Author { Name = "Author 1", Surname = "Surname1" },

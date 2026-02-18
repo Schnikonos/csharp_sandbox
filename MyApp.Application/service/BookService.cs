@@ -8,26 +8,54 @@ using System;
 
 namespace MyApp.Application.service
 {
-    public class BookService(IAppDbContext appDbContext) : IBookService
+    public class BookService(AppDbContext appDbContext) : IBookService
     {
-        async public Task<List<Book>> FindBooks(Author author)
+        // --- Book CRUD ---
+
+        // Create
+        public async Task<Book> AddBook(Book book)
         {
-            List<Book> books = await appDbContext.Books.ToListAsync();
-            var book = new Book { Title = "Title1", Description = "Description1", Author = author, AuthorId = author.Id };
-            var list = new List<Book>();
-            list.Add(book);
-            return list;
+            await appDbContext.Books.AddAsync(book);
+            await appDbContext.SaveChangesAsync();
+            return book;
         }
 
-        public async Task AddAuthor(Author author)
+        // Read (single)
+        public async Task<Book?> GetBookById(int id)
         {
-            await appDbContext.Authors.AddAsync(author);
-            appDbContext.SaveChanges();
+            return await appDbContext.Books
+                .Include(b => b.Author)
+                .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        async public Task<List<Author>> GetAuthors()
+        // Read (all, ordered)
+        public async Task<List<Book>> GetBooks()
         {
-            return await appDbContext.Authors.ToListAsync();
+            return await appDbContext.Books
+                .Include(b => b.Author)
+                .OrderBy(b => b.Title)
+                .ThenBy(b => b.Id)
+                .ToListAsync();
+        }
+
+        // Update
+        public async Task UpdateBook(Book book)
+        {
+            appDbContext.Books.Update(book);
+            await appDbContext.SaveChangesAsync();
+        }
+
+        // Delete
+        public async Task DeleteBook(int id)
+        {
+            int rowsAffected = await appDbContext.Books
+                .Where(b => b.Id == id)
+                .ExecuteDeleteAsync();
+
+            if (rowsAffected == 0)
+            {
+                throw new KeyNotFoundException($"Book with ID {id} not found.");
+            }
         }
     }
 }

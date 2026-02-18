@@ -6,8 +6,8 @@
         public required string Title { get; set; } = null!;
 
         public int AuthorId { get; set; }
-        public required Author Author { get; set; } = null!;
+        public Author? Author { get; set; }
 
-        public required string? Description { get; set; }
+        public string? Description { get; set; }
     }
 }

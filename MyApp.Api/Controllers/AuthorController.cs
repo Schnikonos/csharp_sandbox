@@ -7,23 +7,30 @@ namespace MyApp.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthorController(IBookService bookService, ILogger<AuthorController> logger) : ControllerBase
+    public class AuthorController(IAuthorService authorService, ILogger<AuthorController> logger) : ControllerBase
     {
-        private readonly IBookService bookService = bookService;
+        private readonly IAuthorService _authorService = authorService;
 
 
         [HttpGet("all")]
         async public Task<List<Author>> GetAuthors()
         {
             logger.LogInformation("GetAuthors");
-            return await this.bookService.GetAuthors();
+            return await this._authorService.GetAuthors();
         }
 
         [HttpPost]
         public async Task AddAuthor(Author author)
         {
             logger.LogInformation("AddAuthor {author}", author);
-            await this.bookService.AddAuthor(author);
+            await this._authorService.AddAuthor(author);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task DeleteAuthor(int id)
+        {
+            logger.LogInformation("Delete Author {id}", id);
+            await this._authorService.DeleteAuthor(id);
         }
     }
 }

@@ -30,7 +30,7 @@ Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
     .CreateLogger();
 
-builder.Services.AddDbContext<IAppDbContext, AppDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(
         configuration.GetConnectionString("Default"),
         b => b.MigrationsAssembly("MyApp.Infrastructure")
@@ -66,6 +66,7 @@ builder.Services.AddHttpClient("demoApiClient", client =>
 
 
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IAuthorInfoService, AuthorInfoService>();
 builder.Services.AddSingleton<HtmlTemplateRenderer>();
 builder.Services.AddHostedService<SchedulerService>();

@@ -4,8 +4,10 @@ namespace MyApp.Application.service
 {
     public interface IBookService
     {
-        Task AddAuthor(Author author);
-        Task<List<Book>> FindBooks(Author author);
-        Task<List<Author>> GetAuthors();
+        Task<Book> AddBook(Book book);
+        Task<Book?> GetBookById(int id);
+        Task<List<Book>> GetBooks();
+        Task UpdateBook(Book book);
+        Task DeleteBook(int id);
     }
 }

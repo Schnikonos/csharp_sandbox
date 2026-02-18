@@ -15,6 +15,7 @@ namespace MyApp.Application.Tests
     {
         private readonly ITestOutputHelper output;
         private readonly BookService bookService;
+        private readonly AuthorService authorService;
         private readonly AppDbContext context;
 
         public BookServiceTest(ITestOutputHelper output)
@@ -22,12 +23,13 @@ namespace MyApp.Application.Tests
             this.output = output;
 
             var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase("TestDb")
+                .UseInMemoryDatabase(Guid.NewGuid().ToString()) // Unique DB per test class instance
                 .Options;
 
             context = new AppDbContext(options);
-            context.Database.EnsureDeleted(); // avoid data persistence between tests
+            context.Database.EnsureDeleted();
             bookService = new BookService(context);
+            authorService = new AuthorService(context);
         }
 
         public void Dispose()
@@ -36,19 +38,81 @@ namespace MyApp.Application.Tests
         }
 
         [Fact]
-        public async Task TestMockDbGet()
+        public async Task AddBook_ShouldAddBook()
         {
-            output.WriteLine("test1");
+            var author = new Author { Name = "John", Surname = "Doe" };
+            await authorService.AddAuthor(author);
 
-            context.Authors.Add(new Author { Id = 1, Name = "Author1", Surname = "Surname1" });
-            context.Authors.Add(new Author { Id = 2, Name = "Author2", Surname = "Surname2" });
-            context.SaveChanges();
+            var book = new Book { Title = "Test Book", AuthorId = author.Id, Description = "Desc" };
+            var result = await bookService.AddBook(book);
 
-            List<Author> res = await bookService.GetAuthors();
+            Assert.NotEqual(0, result.Id);
+            Assert.Equal("Test Book", result.Title);
+            Assert.Equal(author.Id, result.AuthorId);
+        }
 
-            output.WriteLine("test1 {0}", res[0].Name);
-            Assert.Equal("Author1", res[0].Name);
-            //dbMock.Verify(x => x.Authors, Times.Once);
+        [Fact]
+        public async Task GetBookById_ShouldReturnBookWithAuthor()
+        {
+            var author = new Author { Name = "Jane", Surname = "Smith" };
+            await authorService.AddAuthor(author);
+
+            var book = new Book { Title = "Book 1", AuthorId = author.Id, Description = "Desc" };
+            await bookService.AddBook(book);
+
+            var fetched = await bookService.GetBookById(book.Id);
+
+            Assert.NotNull(fetched);
+            Assert.Equal("Book 1", fetched!.Title);
+            Assert.NotNull(fetched.Author);
+            Assert.Equal("Jane", fetched.Author.Name);
+        }
+
+        [Fact]
+        public async Task GetBooks_ShouldReturnAllBooksWithAuthors()
+        {
+            var author = new Author { Name = "A", Surname = "B" };
+            await authorService.AddAuthor(author);
+
+            await bookService.AddBook(new Book { Title = "Book A", AuthorId = author.Id, Description = "D1" });
+            await bookService.AddBook(new Book { Title = "Book B", AuthorId = author.Id, Description = "D2" });
+
+            var books = await bookService.GetBooks();
+
+            Assert.Equal(2, books.Count);
+            Assert.All(books, b => Assert.NotNull(b.Author));
+        }
+
+        [Fact]
+        public async Task UpdateBook_ShouldModifyBook()
+        {
+            var author = new Author { Name = "C", Surname = "D" };
+            await authorService.AddAuthor(author);
+
+            var book = new Book { Title = "Old Title", AuthorId = author.Id, Description = "Old" };
+            await bookService.AddBook(book);
+
+            book.Title = "New Title";
+            book.Description = "New Desc";
+            await bookService.UpdateBook(book);
+
+            var updated = await bookService.GetBookById(book.Id);
+            Assert.Equal("New Title", updated!.Title);
+            Assert.Equal("New Desc", updated.Description);
+        }
+
+
+        [Fact]
+        public async Task GetAuthors_ShouldReturnOrderedAuthors()
+        {
+            await authorService.AddAuthor(new Author { Name = "Zoe", Surname = "Alpha" });
+            await authorService.AddAuthor(new Author { Name = "Anna", Surname = "Beta" });
+
+            var authors = await authorService.GetAuthors();
+
+            Assert.Equal(2, authors.Count);
+            Assert.Equal("Anna", authors[0].Name);
+            Assert.Equal("Zoe", authors[1].Name);
         }
     }
 }
