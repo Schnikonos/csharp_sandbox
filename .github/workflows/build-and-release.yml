@@ -19,8 +19,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           repo: Schnikonos/csharp_sandbox_client
-          workflow: build-and-release.yml
-          name: frontend-build
+          workflow: build-test-deploy
           path: ./frontend
 
       - name: Extract frontend artifact
