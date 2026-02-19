@@ -10,10 +10,11 @@ namespace MyApp.Application.service
     public class AuthorService(AppDbContext appDbContext) : IAuthorService
     {
         // --- Author methods
-        public async Task AddAuthor(Author author)
+        public async Task<Author> AddAuthor(Author author)
         {
             await appDbContext.Authors.AddAsync(author);
             await appDbContext.SaveChangesAsync();
+            return author;
         }
 
         public async Task DeleteAuthor(int id)
@@ -26,6 +27,12 @@ namespace MyApp.Application.service
             {
                 throw new KeyNotFoundException($"Author with ID {id} not found.");
             }
+        }
+
+        async public Task<Author?> GetAuthorById(int id)
+        {
+            return await appDbContext.Authors
+                .FirstOrDefaultAsync(a => a.Id == id);
         }
 
         async public Task<List<Author>> GetAuthors()

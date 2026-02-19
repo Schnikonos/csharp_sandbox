@@ -10,27 +10,50 @@ namespace MyApp.Api.Controllers
     public class AuthorController(IAuthorService authorService, ILogger<AuthorController> logger) : ControllerBase
     {
         private readonly IAuthorService _authorService = authorService;
+        private readonly ILogger<AuthorController> _logger = logger;
 
 
         [HttpGet("all")]
         async public Task<List<Author>> GetAuthors()
         {
-            logger.LogInformation("GetAuthors");
+            _logger.LogInformation("GetAuthors");
             return await this._authorService.GetAuthors();
         }
 
-        [HttpPost]
-        public async Task AddAuthor(Author author)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Author>> GetAuthorById(int id)
         {
-            logger.LogInformation("AddAuthor {author}", author);
-            await this._authorService.AddAuthor(author);
+            _logger.LogInformation("GetAuthorById - {}", id);
+            var author = await _authorService.GetAuthorById(id);
+            if (author == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(author);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Author>> AddAuthor(Author author)
+        {
+            _logger.LogInformation("AddAuthor {author}", author);
+            Author created = await this._authorService.AddAuthor(author);
+            return CreatedAtAction(nameof(GetAuthorById), new { id = created.Id }, created);
         }
 
         [HttpDelete("{id}")]
-        public async Task DeleteAuthor(int id)
+        public async Task<IActionResult> DeleteAuthor(int id)
         {
-            logger.LogInformation("Delete Author {id}", id);
-            await this._authorService.DeleteAuthor(id);
+            _logger.LogInformation("Delete Author {id}", id);
+            try
+            {
+                await this._authorService.DeleteAuthor(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

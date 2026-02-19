@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using MyApp.Application.service;
@@ -22,12 +23,15 @@ namespace MyApp.Application.Tests
         {
             this.output = output;
 
+            var connection = new SqliteConnection("Filename=:memory:");
+            connection.Open();
+
             var options = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString()) // Unique DB per test class instance
+                .UseSqlite(connection)
                 .Options;
 
             context = new AppDbContext(options);
-            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated(); // Ensure schema is created
             bookService = new BookService(context);
             authorService = new AuthorService(context);
         }
