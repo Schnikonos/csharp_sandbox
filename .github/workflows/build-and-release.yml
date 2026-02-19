@@ -32,10 +32,10 @@ jobs:
         run: dotnet restore MyApp.Api/MyApp.Api.csproj
 
       - name: Build Infrastructure
-        run: dotnet build MyApp.Infrastructure/MyApp.Infrastructure.csproj --configuration Release
+        run: dotnet build MyApp.Infrastructure/MyApp.Infrastructure.csproj --configuration Release --verbosity detailed
 
       - name: Build API
-        run: dotnet build MyApp.Api/MyApp.Api.csproj --configuration Release
+        run: dotnet build MyApp.Api/MyApp.Api.csproj --configuration Release --verbosity detailed
       
       - name: Apply EF Core migrations
         run: dotnet ef database update --project MyApp.Infrastructure/MyApp.Infrastructure.csproj --startup-project MyApp.Api/MyApp.Api.csproj
