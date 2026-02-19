@@ -33,6 +33,9 @@ jobs:
 
       - name: Restore Infrastructure
         run: dotnet restore MyApp.Infrastructure/MyApp.Infrastructure.csproj
+
+      - name: Restore API
+        run: dotnet restore MyApp.Api/MyApp.Api.csproj
       
       - name: Apply EF Core migrations
         run: dotnet ef database update --project MyApp.Infrastructure/MyApp.Infrastructure.csproj --startup-project MyApp.Api/MyApp.Api.csproj
