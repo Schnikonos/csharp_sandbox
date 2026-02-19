@@ -115,7 +115,7 @@ app.Services.GetRequiredService<CEServiceListener>();
 app.Services.GetRequiredService<CEServiceListener2>();
 
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
