@@ -38,19 +38,19 @@ jobs:
         run: dotnet build MyApp.Api/MyApp.Api.csproj --configuration Release
       
       - name: Test (Api)
-        run: dotnet test MyApp.Api.Tests/MyApp.Api.Tests.csproj --no-build --configuration Release --verbosity normal
+        run: dotnet test MyApp.Api.Tests/MyApp.Api.Tests.csproj --configuration Release --verbosity normal
 
       - name: Test (Application)
-        run: dotnet test MyApp.Application.Tests/MyApp.Application.Tests.csproj --no-build --configuration Release --verbosity normal
+        run: dotnet test MyApp.Application.Tests/MyApp.Application.Tests.csproj --configuration Release --verbosity normal
 
       - name: Test (Infrastructure)
-        run: dotnet test MyApp.Infrastructure.Tests/MyApp.Infrastructure.Tests.csproj --no-build --configuration Release --verbosity normal
+        run: dotnet test MyApp.Infrastructure.Tests/MyApp.Infrastructure.Tests.csproj --configuration Release --verbosity normal
 
       - name: Test (Domain)
-        run: dotnet test MyApp.Domain.Tests/MyApp.Domain.Tests.csproj --no-build --configuration Release --verbosity normal
+        run: dotnet test MyApp.Domain.Tests/MyApp.Domain.Tests.csproj --configuration Release --verbosity normal
 
       - name: Test (IdGenerator)
-        run: dotnet test MyApp.IdGenerator.Tests/MyApp.IdGenerator.Tests.csproj --no-build --configuration Release --verbosity normal
+        run: dotnet test MyApp.IdGenerator.Tests/MyApp.IdGenerator.Tests.csproj --configuration Release --verbosity normal
 
       - name: Publish API
         run: dotnet publish MyApp.Api/MyApp.Api.csproj --configuration Release --output ./publish
