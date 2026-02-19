@@ -31,7 +31,12 @@ jobs:
 
       - name: Extract frontend artifact
         run: |
-          unzip -o ./frontend/*.zip -d ./frontend
+          unzip -o ./frontend/artifact.zip -d ./frontend
+          rm frontend/artifact.zip
+
+      - name: Extract inner frontend zip
+        run: |
+          unzip -o ./frontend/*.zip -d ./frontend/unzipped
 
       - name: Copy frontend to wwwroot
         run: |
