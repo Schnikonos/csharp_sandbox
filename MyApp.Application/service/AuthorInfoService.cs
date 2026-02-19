@@ -18,6 +18,7 @@ namespace MyApp.Application.service
     {
         public async Task<Object> PrepareMessage(CancellationToken stoppingToken)
         {
+            db.Database.EnsureCreated();
             List<Author> authors = [.. db.Authors];
             var html = await renderer.RenderAsync("Templates.AuthorInfo.cshtml", authors);
             logger.LogInformation("Test {0}", html);
