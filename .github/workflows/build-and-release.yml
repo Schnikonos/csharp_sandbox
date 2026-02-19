@@ -25,17 +25,17 @@ jobs:
       - name: Add dotnet tools to PATH
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Install EF Core CLI
-        run: dotnet tool install --global dotnet-ef
-
-      - name: Add dotnet tools to PATH
-        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
-
       - name: Restore Infrastructure
         run: dotnet restore MyApp.Infrastructure/MyApp.Infrastructure.csproj
 
       - name: Restore API
         run: dotnet restore MyApp.Api/MyApp.Api.csproj
+
+      - name: Build Infrastructure
+        run: dotnet build MyApp.Infrastructure/MyApp.Infrastructure.csproj --configuration Release
+
+      - name: Build API
+        run: dotnet build MyApp.Api/MyApp.Api.csproj --configuration Release
       
       - name: Apply EF Core migrations
         run: dotnet ef database update --project MyApp.Infrastructure/MyApp.Infrastructure.csproj --startup-project MyApp.Api/MyApp.Api.csproj
