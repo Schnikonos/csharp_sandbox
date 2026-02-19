@@ -32,10 +32,10 @@ jobs:
         run: dotnet restore MyApp.Api/MyApp.Api.csproj
 
       - name: Build Infrastructure
-        run: dotnet build MyApp.Infrastructure/MyApp.Infrastructure.csproj --configuration Release --verbosity detailed
+        run: dotnet build MyApp.Infrastructure/MyApp.Infrastructure.csproj --configuration Release
 
       - name: Build API
-        run: dotnet build MyApp.Api/MyApp.Api.csproj --configuration Release --verbosity detailed
+        run: dotnet build MyApp.Api/MyApp.Api.csproj --configuration Release
       
       - name: Test (Api)
         run: dotnet test MyApp.Api.Tests/MyApp.Api.Tests.csproj --no-build --configuration Release --verbosity normal
@@ -60,21 +60,3 @@ jobs:
         with:
           name: api-publish
           path: ./publish
-
-  release:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Download published API artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: api-publish
-          path: ./publish
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ./publish/**
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
