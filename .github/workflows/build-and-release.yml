@@ -31,6 +31,9 @@ jobs:
       - name: Add dotnet tools to PATH
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
+      - name: Restore Infrastructure
+        run: dotnet restore MyApp.Infrastructure/MyApp.Infrastructure.csproj
+      
       - name: Apply EF Core migrations
         run: dotnet ef database update --project MyApp.Infrastructure/MyApp.Infrastructure.csproj --startup-project MyApp.Api/MyApp.Api.csproj
 
