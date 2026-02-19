@@ -55,7 +55,7 @@ jobs:
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build --configuration Release
       
       - name: Test
         run: dotnet test --no-build --configuration Release --verbosity normal
