@@ -41,7 +41,7 @@ jobs:
       - name: Copy frontend to wwwroot
         run: |
           mkdir -p MyApp.Api/wwwroot
-          cp -r ./frontend/* MyApp.Api/wwwroot/
+          cp -r ./frontend/unzipped/untitled/browser/* MyApp.Api/wwwroot/
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
