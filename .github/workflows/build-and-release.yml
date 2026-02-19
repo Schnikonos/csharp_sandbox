@@ -54,32 +54,11 @@ jobs:
       - name: Add dotnet tools to PATH
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Restore Infrastructure
-        run: dotnet restore MyApp.Infrastructure/MyApp.Infrastructure.csproj
-
-      - name: Restore API
-        run: dotnet restore MyApp.Api/MyApp.Api.csproj
-
-      - name: Build Infrastructure
-        run: dotnet build MyApp.Infrastructure/MyApp.Infrastructure.csproj --configuration Release
-
-      - name: Build API
-        run: dotnet build MyApp.Api/MyApp.Api.csproj --configuration Release
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
       
-      - name: Test (Api)
-        run: dotnet test MyApp.Api.Tests/MyApp.Api.Tests.csproj --configuration Release --verbosity normal
-
-      - name: Test (Application)
-        run: dotnet test MyApp.Application.Tests/MyApp.Application.Tests.csproj --configuration Release --verbosity normal
-
-      - name: Test (Infrastructure)
-        run: dotnet test MyApp.Infrastructure.Tests/MyApp.Infrastructure.Tests.csproj --configuration Release --verbosity normal
-
-      - name: Test (Domain)
-        run: dotnet test MyApp.Domain.Tests/MyApp.Domain.Tests.csproj --configuration Release --verbosity normal
-
-      - name: Test (IdGenerator)
-        run: dotnet test MyApp.IdGenerator.Tests/MyApp.IdGenerator.Tests.csproj --configuration Release --verbosity normal
+      - name: Test
+        run: dotnet test --no-build --configuration Release --verbosity normal
 
       - name: Publish API
         run: dotnet publish MyApp.Api/MyApp.Api.csproj --configuration Release --output ./publish --self-contained true -r win-x64
