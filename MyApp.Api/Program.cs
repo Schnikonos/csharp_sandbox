@@ -69,7 +69,7 @@ builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IAuthorInfoService, AuthorInfoService>();
 builder.Services.AddSingleton<HtmlTemplateRenderer>();
-builder.Services.AddHostedService<SchedulerService>();
+//builder.Services.AddHostedService<SchedulerService>();
 builder.Services.AddTransient<AsyncDemoService>();
 builder.Services.AddScoped<ClientCallService>();
 builder.Services.AddScoped<FileDemoService>();
