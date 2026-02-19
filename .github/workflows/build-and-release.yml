@@ -25,6 +25,9 @@ jobs:
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
+      - name: Build (detailed log)
+        run: dotnet build --no-restore --configuration Release --verbosity detailed
+
       - name: Install EF Core CLI
         run: dotnet tool install --global dotnet-ef
 
