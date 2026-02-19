@@ -14,14 +14,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Download frontend artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{ secrets.FRONTEND_TOKEN }}
-          repo: Schnikonos/csharp_sandbox_client
-          workflow: CI/CD
-          branch: main
-          path: ./frontend
+      - name: Get artifact ID from other repo
+        run: |
+          ARTIFACT_ID=$(curl -s -H "Authorization: token ${{ secrets.FRONTEND_TOKEN }}" \
+            https://api.github.com/repos/Schnikonos/csharp_sandbox_client/actions/artifacts \
+            | jq '.artifacts[] | select(.name | startswith("frontend-build-")) | .id' | head -n 1)
+          echo "ARTIFACT_ID=$ARTIFACT_ID" >> $GITHUB_ENV
+
+      - name: Download artifact zip
+        if: env.ARTIFACT_ID != ''
+        run: |
+          mkdir -p ./frontend
+          curl -L -H "Authorization: token ${{ secrets.FRONTEND_TOKEN }}" \
+            https://api.github.com/repos/Schnikonos/csharp_sandbox_client/actions/artifacts/$ARTIFACT_ID/zip \
+            -o frontend/artifact.zip
 
       - name: Extract frontend artifact
         run: |
