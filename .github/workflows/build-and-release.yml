@@ -37,9 +37,6 @@ jobs:
       - name: Build API
         run: dotnet build MyApp.Api/MyApp.Api.csproj --configuration Release --verbosity detailed
       
-      - name: Apply EF Core migrations
-        run: dotnet ef database update --project MyApp.Infrastructure/MyApp.Infrastructure.csproj --startup-project MyApp.Api/MyApp.Api.csproj
-
       - name: Test (Api)
         run: dotnet test MyApp.Api.Tests/MyApp.Api.Tests.csproj --no-build --configuration Release --verbosity normal
 
