@@ -123,6 +123,7 @@ app.UseAuthorization();
 app.UseRateLimiter();
 
 // serve static files in wwwroot folder (e.g. for OpenAPI UI)
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.MapControllers();
