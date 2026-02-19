@@ -26,6 +26,11 @@ namespace MyApp.Api.Tests
                     services.Remove(descriptor);
 
                 services.AddSingleton(AuthorServiceMock.Object);
+
+                // Remove SchedulerService registration for tests
+                var schedulerDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(SchedulerService));
+                if (schedulerDescriptor != null)
+                    services.Remove(schedulerDescriptor);
             });
         }
     }
