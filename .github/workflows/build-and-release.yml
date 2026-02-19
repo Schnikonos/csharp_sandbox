@@ -17,7 +17,7 @@ jobs:
       - name: Download frontend artifact
         uses: dawidd6/action-download-artifact@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.FRONTEND_TOKEN }}
           repo: Schnikonos/csharp_sandbox_client
           workflow: CI/CD
           branch: main
