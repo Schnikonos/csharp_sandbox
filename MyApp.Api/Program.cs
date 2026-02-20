@@ -30,9 +30,11 @@ Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
     .CreateLogger();
 
+var baseDir = AppContext.BaseDirectory;
+var dbPath = Path.Combine(baseDir, "app.db");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(
-        configuration.GetConnectionString("Default"),
+        $"Data Source={dbPath}",
         b => b.MigrationsAssembly("MyApp.Infrastructure")
     ));
 
@@ -102,6 +104,12 @@ if (builder.Environment.EnvironmentName == "Development")
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
