@@ -35,6 +35,8 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+# Windows-style paths created by EF Core Design on Linux (bin\Debug with literal backslash)
+*bin\\*
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
